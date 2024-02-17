@@ -1,1 +1,4 @@
-# football_statistic_analytics_main
+1. SQL module
+2. Vizualization module
+3. Calculation module
+4. Data module
