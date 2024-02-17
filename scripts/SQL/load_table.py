@@ -1,12 +1,16 @@
-import ssh_sql_connector as conn
+# import scripts.SQL.ssh_sql_connector as conn
 from datetime import datetime
 import pandas as pd
 
-sql = conn.SQL_connector()
+# sql = conn.SQL_connector()
 
 
 def load_log_table(
-    table_name: str, table_shape: pd.DataFrame.shape, success: bool, error: str = None
+    sqlengine,
+    table_name: str,
+    table_shape: pd.DataFrame.shape,
+    success: bool,
+    error: str = None,
 ):
     name: str = "data_log"
     if success:
@@ -22,12 +26,12 @@ def load_log_table(
             "error": [error],
         }
     )
-    sql.load_data_to_SQL(df=df, table=name)
+    sqlengine.load_data_to_SQL(df=df, table=name)
 
 
-def data_loader(name: str, df: pd.DataFrame, truncate: bool = True):
+def data_loader(sqlengine, name: str, df: pd.DataFrame, truncate: bool = True):
     try:
-        sql.load_data_to_SQL(
+        sqlengine.load_data_to_SQL(
             df=df,
             table=name,
             truncate=truncate,

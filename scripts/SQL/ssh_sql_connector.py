@@ -1,5 +1,5 @@
 import src.pysql.pySQL as sqlconn
-import conn as conn
+import scripts.SQL.conn as conn
 
 
 def SQL_connector():
