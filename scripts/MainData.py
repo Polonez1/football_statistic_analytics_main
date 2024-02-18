@@ -28,6 +28,9 @@ class GeneralData:
 
         return dff
 
+    def result_distribution(self):
+        pass
+
 
 if "__main__" == __name__:
     data = GeneralData(seasons=[2020, 2021, 2022])
