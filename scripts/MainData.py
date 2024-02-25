@@ -35,4 +35,6 @@ if "__main__" == __name__:
     df = data.fixture_data()
 
     skellam = SkellamDistribution(data=df)
-    print(skellam.model_params)
+    dff = skellam.create_overunder_data()
+
+    print(dff)
