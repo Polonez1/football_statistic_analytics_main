@@ -9,10 +9,11 @@ def add_average_goals(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_goals_string_result(df: pd.DataFrame) -> pd.DataFrame:
-    df["goals_result"] = (
-        df["goals_home"].astype("int").astype("str")
+    df_copy = df.copy()
+    df_copy["goals_result"] = (
+        df_copy["goals_home"].astype("int").astype("str")
         + "-"
-        + df["goals_away"].astype("int").astype("str")
+        + df_copy["goals_away"].astype("int").astype("str")
     )
 
-    return df
+    return df_copy

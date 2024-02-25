@@ -3,6 +3,7 @@ import pandas as pd
 
 from SQL import get_data, ssh_sql_connector
 from Processing import add_columns
+from Calculate.models import SkellamDistribution
 
 
 class GeneralData:
@@ -28,11 +29,10 @@ class GeneralData:
 
         return dff
 
-    def result_distribution(self):
-        pass
-
 
 if "__main__" == __name__:
     data = GeneralData(seasons=[2020, 2021, 2022])
     df = data.fixture_data()
-    print(df)
+
+    skellam = SkellamDistribution(data=df)
+    print(skellam.model_params)
