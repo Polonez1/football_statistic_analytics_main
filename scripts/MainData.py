@@ -36,7 +36,7 @@ if "__main__" == __name__:
     data = GeneralData(seasons=[2020, 2021, 2022])
     df = data.fixture_data()
 
-    skellam = SkellamDistribution(data=df)
-    dff = skellam.create_windrawloss_data()
+    skellam = SkellamDistribution(data=df, season=2020)
+    dff = skellam.averages
 
     print(dff)

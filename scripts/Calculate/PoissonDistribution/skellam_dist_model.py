@@ -8,19 +8,17 @@ import numpy as np
 class SkellamProccesing:
 
     def __init__(self, data: pd.DataFrame, season: int = None, league: str = None):
-        self.data = data
         self.league = league
         self.season = season
-        self.averages = self.__get_averages()
-        self.model_params = self.__skellam_params()
-        # self.SKELLAM_RESULT: pd.DataFrame = self.__skellam_distribution_data()
-        # self.SOURCE_RESULT: pd.DataFrame = self.__source_distribution_data()
-        # self.RESULT_DATA: pd.DataFrame = self.__create_full_data()
+        self.data = data
 
         if season is not None:
             self.__filter_by_season()
         if league is not None:
             self.__filter_by_league()
+
+        self.averages = self.__get_averages()
+        self.model_params = self.__skellam_params()
 
     def __filter_by_season(self):
         if self.season is not None:
