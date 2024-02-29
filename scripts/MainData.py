@@ -37,6 +37,6 @@ if "__main__" == __name__:
     df = data.fixture_data()
 
     skellam = SkellamDistribution(data=df)
-    dff = skellam.create_overunder_data()
+    dff = skellam.create_windrawloss_data()
 
     print(dff)
