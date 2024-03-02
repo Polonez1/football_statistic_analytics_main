@@ -1,4 +1,4 @@
-from Calculate.PoissonDistribution import poisson_dist
+from Calculate.PoissonDistribution import poisson_dist, zero_inflation
 from Calculate.ModelsDataProcessing import skellam_processing
 
 import pandas as pd
@@ -54,7 +54,7 @@ class SkellamProccesing:
             "league": league,
         }
 
-    def __skellam_distribution_data(self):
+    def skellam_distribution_data(self):
         skellam_dist = poisson_dist.results_distribution_by_skellam(
             avg_1=self.averages["goals_home"],
             avg_2=self.averages["goals_away"],
@@ -63,7 +63,7 @@ class SkellamProccesing:
         skellam_dist = skellam_processing.skellam_dist_processing(skellam_dist)
         return skellam_dist
 
-    def __source_distribution_data(self):
+    def source_distribution_data(self):
         df = skellam_processing.group_fixture_by_goals(self.data, by=["goals_result"])
         df["source"] = "source"
 
@@ -77,8 +77,8 @@ class SkellamProccesing:
         return matrix
 
     def create_result_data(self) -> pd.DataFrame:
-        fact = self.__source_distribution_data()
-        skellam_dist = self.__skellam_distribution_data()
+        fact = self.source_distribution_data()
+        skellam_dist = self.skellam_distribution_data()
 
         dff = pd.concat([fact, skellam_dist])
 
@@ -137,3 +137,11 @@ class SkellamProccesing:
         df1 = self.__create_overunder_source_data()
         df2 = self.__create_overunder_skellam_data()
         return pd.concat([df1, df2])
+
+    def zero_inflation_params(self):
+        params = zero_inflation.zero_inflation_koef(
+            source_data=self.source_distribution_data(),
+            skellam_data=self.skellam_distribution_data(),
+        )
+
+        return params

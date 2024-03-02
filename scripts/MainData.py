@@ -35,8 +35,16 @@ class GeneralData:
 if "__main__" == __name__:
     data = GeneralData(seasons=[2020, 2021, 2022])
     df = data.fixture_data()
-
-    skellam = SkellamDistribution(data=df, season=2020)
-    dff = skellam.averages
-
-    print(dff)
+    leagues = set(df["league_name"])
+    seasons = set(df["league_season"])
+    data = []
+    for i in leagues:
+        for j in seasons:
+            skellam = SkellamDistribution(data=df, season=j, league=i)
+            dff = skellam.create_result_data()
+            dff["league"] = i
+            dff["season"] = j
+            data.append(dff)
+            print(i, j)
+    # f = pd.concat(data)
+    # f.to_csv("data.csv")
