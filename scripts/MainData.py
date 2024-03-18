@@ -31,20 +31,40 @@ class GeneralData:
 
         return dff
 
+    def expand_result_data_by_model(self, model: str) -> pd.DataFrame:
+        """_summary_
+
+        Args:
+            model (str): SkellamDist
+        """
+        df = self.fixture_data()
+        leagues = set(df["league_name"])
+        seasons = set(df["league_season"])
+
+        MODEL_LIST = {"SkellamDist": SkellamDistribution}
+
+        data = []
+        for league in leagues:
+            for season in seasons:
+                model_select = MODEL_LIST[model]
+                model_processing = model_select(data=df, season=season, league=league)
+                dff = model_processing.create_result_data()
+                dff["league"] = league
+                dff["season"] = season
+                data.append(dff)
+
+        return pd.concat(data)
+
 
 if "__main__" == __name__:
     data = GeneralData(seasons=[2020, 2021, 2022])
     df = data.fixture_data()
-    leagues = set(df["league_name"])
-    seasons = set(df["league_season"])
-    data = []
-    for i in leagues:
-        for j in seasons:
-            skellam = SkellamDistribution(data=df, season=j, league=i)
-            dff = skellam.create_result_data()
-            dff["league"] = i
-            dff["season"] = j
-            data.append(dff)
-            print(i, j)
-    # f = pd.concat(data)
-    # f.to_csv("data.csv")
+    model = SkellamDistribution(data=df)
+    params = model.zero_inf_params
+
+    print(df.columns)
+
+    # df = data.expand_result_data_by_model(model="SkellamDist")
+
+    # df.to_csv("data.csv")
+    # print(df)

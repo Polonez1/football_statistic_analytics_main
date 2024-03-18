@@ -120,6 +120,52 @@ def asian_handicap_from_skellam_matrix(avg_1, avg_2):
     pass
 
 
+# from scipy.stats import poisson
+# import pandas as pd
+# import numpy as np
+# import statsmodels.api as sm
+#
+#
+## Funkcja do obliczenia prawdopodobieństw dla zero-inflated Poisson
+# def calculate_zero_inflated_poisson_dist(
+#    avg: float, zero_prob: float, range_from: int = 0, range_to: int = 10
+# ):
+#    goals_list = list(range(range_from, range_to + 1))
+#    p_zero = zero_prob  # prawdopodobieństwo zerowego wyniku
+#    p_nonzero = 1 - zero_prob  # prawdopodobieństwo pozostałych wyników
+#
+#    # Obliczanie prawdopodobieństw dla wyników od 1 do 10
+#    p_nonzero_values = [poisson.pmf(k=goal, mu=avg).round(2) for goal in goals_list[1:]]
+#
+#    # Składanie prawdopodobieństw w jedną ramkę danych
+#    data = {
+#        "goal": [0] + goals_list[1:],
+#        "p": [p_zero] + [p * p_nonzero for p in p_nonzero_values],
+#    }
+#    df = pd.DataFrame(data)
+#    return df
+#
+#
+## Dane z meczu
+# scores = np.array([0, 5, 0, 0, 1, 1, 3, 3, 4, 1, 1])
+#
+## Stworzenie modelu zero-inflated Poissona
+# model = sm.ZeroInflatedPoisson(scores, exog=None, inflation="logit")
+#
+## Dopasowanie modelu do danych za pomocą metody MLE
+# results = model.fit()
+#
+## Pobranie oszacowanych parametrów
+# zero_prob = results.predict()[0]  # Prawdopodobieństwo zerowego wyniku
+#
+## Obliczenie rozkładu zero-inflated Poissona
+# zero_inflated_poisson_distribution = calculate_zero_inflated_poisson_dist(
+#    avg=1.8, zero_prob=zero_prob
+# )
+
+# rint(zero_inflated_poisson_distribution)
+
+
 if "__main__" == __name__:
     df = btts_from_skellam_matrix(avg_1=0.8, avg_2=3.1)
     print(df)

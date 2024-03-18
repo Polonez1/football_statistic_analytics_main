@@ -7,7 +7,13 @@ import numpy as np
 
 class SkellamProccesing:
 
-    def __init__(self, data: pd.DataFrame, season: int = None, league: str = None):
+    def __init__(
+        self,
+        data: pd.DataFrame,
+        season: int = None,
+        league: str = None,
+        zero_inf: bool = False,
+    ):
         self.league = league
         self.season = season
         self.data = data
@@ -19,6 +25,7 @@ class SkellamProccesing:
 
         self.averages = self.__get_averages()
         self.model_params = self.__skellam_params()
+        self.zero_inf_params = self.__zero_inflation_params()
 
     def __filter_by_season(self):
         if self.season is not None:
@@ -138,7 +145,7 @@ class SkellamProccesing:
         df2 = self.__create_overunder_skellam_data()
         return pd.concat([df1, df2])
 
-    def zero_inflation_params(self):
+    def __zero_inflation_params(self):
         params = zero_inflation.zero_inflation_koef(
             source_data=self.source_distribution_data(),
             skellam_data=self.skellam_distribution_data(),

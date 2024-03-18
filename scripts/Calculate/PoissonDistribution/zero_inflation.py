@@ -1,5 +1,6 @@
 import pandas as pd
-
+import numpy as np
+import statsmodels.api as sm
 
 ZERO_RESULTS = [
     "0-0",
@@ -58,19 +59,35 @@ def zero_inflation_koef(source_data: pd.DataFrame, skellam_data: pd.DataFrame):
     }
 
 
-if "__main__" == __name__:
-    df = pd.DataFrame(
-        {
-            "goals_result": ["0-1", "0-0", "1-1", "2-0", "3-3"],
-            "count": [10, 10, 50, 10, 20],
-        }
-    )
+# ---------------------------------------------------------#
 
-    df2 = pd.DataFrame(
-        {
-            "goals_result": ["0-1", "0-0", "1-1", "2-0", "3-3"],
-            "count": [5, 10, 55, 10, 20],
-        }
-    )
-    params = zero_inflation_koef(source_data=df, skellam_data=df2)
-    print(params)
+
+def zero_probability(data):
+    # Dopasowanie modelu Zero-Inflated Poisson za pomocą MLE
+    model = sm.ZeroInflatedPoisson(data["count"], exog=None, inflation="logit")
+    results = model.fit()
+
+    # Pobranie prawdopodobieństwa wystąpienia zera
+    zero_prob = results.predict()[0]
+    return zero_prob
+
+
+if "__main__" == __name__:
+
+    # Dane dotyczące liczby goli w meczach piłkarskich
+    goals = np.array([0, 2, 1, 0, 1, 3, 0, 0, 2, 1])
+
+    # Przykładowe zmienne egzogeniczne
+    ages = np.array([30, 25, 28, 32, 27, 29, 31, 26, 28, 27])
+
+    # Dopasowanie modelu zero-inflated Poissona do danych za pomocą MLE
+    model = sm.ZeroInflatedPoisson(goals, exog=ages, inflation="logit")
+    results = model.fit()
+
+    # Pobranie oszacowanych parametrów
+    params = results.params
+
+    # Obliczenie prawdopodobieństwa zerowego wyniku na podstawie oszacowanych parametrów
+    zero_prob = np.exp(params[0]) / (1 + np.exp(params[0]))
+
+    print("Prawdopodobieństwo wyniku 0:", zero_prob)
