@@ -3,19 +3,36 @@ import pandas as pd
 import numpy as np
 
 
-def calculate_poisson_dist(avg: int, range_from: int = 0, range_to: int = 11):
+def calculate_poisson_dist(
+    avg: int, zero_prob: float, range_from: int = 0, range_to: int = 11
+):
+    p_zero = zero_prob
+    p_nonzero = 1 - p_zero
+
     goals_list = list(range(range_from, range_to))
+    standart_dist = [poisson.pmf(k=goal, mu=avg).round(2) for goal in goals_list]
+    zero_inflated_dist = [
+        p_zero + (1 - p_nonzero) * poisson.pmf(k=goal, mu=avg).round(2)
+        for goal in goals_list
+    ]
+
+    if zero_prob == 0:
+        dist = standart_dist
+    else:
+        dist = zero_inflated_dist
+
     data = {
         "goal": goals_list,
-        "p": [poisson.pmf(k=goal, mu=avg).round(2) for goal in goals_list],
+        "p": dist,
     }
     df = pd.DataFrame(data)
+    print(df)
     return df
 
 
 def skellam_dist_matrix(avg_1, avg_2):
-    distribution_1 = calculate_poisson_dist(avg=avg_1)
-    distribution_2 = calculate_poisson_dist(avg=avg_2)
+    distribution_1 = calculate_poisson_dist(avg=avg_1, zero_prob=0)
+    distribution_2 = calculate_poisson_dist(avg=avg_2, zero_prob=0)
     matrix = np.outer(distribution_1["p"], distribution_2["p"])
     result_df = pd.DataFrame(
         matrix, index=distribution_1["goal"], columns=distribution_2["goal"]

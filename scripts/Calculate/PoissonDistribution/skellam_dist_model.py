@@ -146,9 +146,16 @@ class SkellamProccesing:
         return pd.concat([df1, df2])
 
     def __zero_inflation_params(self):
-        params = zero_inflation.zero_inflation_koef(
+        zero_sum, total_sum, percentage = zero_inflation.zero_inflation_koef(
             source_data=self.source_distribution_data(),
             skellam_data=self.skellam_distribution_data(),
         )
+        zero_home, zero_away = zero_inflation.zero_probability_koef(data=self.data)
 
-        return params
+        return {
+            "zero_sum_count": zero_sum,
+            "total_sum_count": total_sum,
+            "percentage": round(percentage, 2),
+            "home_zero": zero_home,
+            "away_zero": zero_away,
+        }

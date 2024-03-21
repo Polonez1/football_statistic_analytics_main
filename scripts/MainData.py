@@ -60,9 +60,9 @@ if "__main__" == __name__:
     data = GeneralData(seasons=[2020, 2021, 2022])
     df = data.fixture_data()
     model = SkellamDistribution(data=df)
-    params = model.zero_inf_params
+    params = model.model_params
 
-    print(df.columns)
+    print(params)
 
     # df = data.expand_result_data_by_model(model="SkellamDist")
 
