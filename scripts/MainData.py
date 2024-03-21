@@ -61,8 +61,10 @@ if "__main__" == __name__:
     df = data.fixture_data()
     model = SkellamDistribution(data=df)
     params = model.model_params
+    inf_params = model.zero_inf_params
 
     print(params)
+    print(inf_params)
 
     # df = data.expand_result_data_by_model(model="SkellamDist")
 
