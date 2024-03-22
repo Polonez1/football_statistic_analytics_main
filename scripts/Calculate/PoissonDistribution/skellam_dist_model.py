@@ -17,6 +17,7 @@ class SkellamProccesing:
         self.league = league
         self.season = season
         self.data = data
+        self.zero_inflation = zero_inf
 
         if season is not None:
             self.__filter_by_season()

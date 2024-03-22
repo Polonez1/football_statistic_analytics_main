@@ -32,18 +32,16 @@ def calculate_poisson_dist(
         "p": dist,
     }
     df = pd.DataFrame(data)
-    print(df)
     return df
 
 
 def skellam_dist_matrix(avg_1, avg_2):
-    distribution_1 = calculate_poisson_dist(avg=avg_1, zero_prob=0.02)
-    distribution_2 = calculate_poisson_dist(avg=avg_2, zero_prob=0.02)
+    distribution_1 = calculate_poisson_dist(avg=avg_1, zero_prob=0.2)
+    distribution_2 = calculate_poisson_dist(avg=avg_2, zero_prob=0.2)
     matrix = np.outer(distribution_1["p"], distribution_2["p"])
     result_df = pd.DataFrame(
         matrix, index=distribution_1["goal"], columns=distribution_2["goal"]
     ).reset_index(drop=True)
-    print(result_df)
     return result_df
 
 

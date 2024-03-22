@@ -38,8 +38,8 @@ def __get_total_count_matches(data: pd.DataFrame):
 
 
 def zero_probability_koef(data: pd.DataFrame):
+    print(data)
     home_zero = data["goals_home"].tolist().count(0) / len(data["goals_home"])
-
     away_zero = data["goals_away"].tolist().count(0) / len(data["goals_away"])
 
     return home_zero, away_zero
