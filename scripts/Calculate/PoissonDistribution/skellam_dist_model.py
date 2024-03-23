@@ -12,7 +12,7 @@ class SkellamProccesing:
         data: pd.DataFrame,
         season: int = None,
         league: str = None,
-        zero_inf: bool = False,
+        zero_inf: float = None,
     ):
         self.league = league
         self.season = season
@@ -26,7 +26,7 @@ class SkellamProccesing:
 
         self.averages = self.__get_averages()
         self.model_params = self.__skellam_params()
-        self.zero_inf_params = self.__zero_inflation_params()
+        # self.zero_inf_params = self.__zero_inflation_params()
 
     def __filter_by_season(self):
         if self.season is not None:

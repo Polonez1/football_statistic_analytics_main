@@ -31,24 +31,21 @@ class GeneralData:
 
         return dff
 
-    def expand_result_data_by_model(self, model: str) -> pd.DataFrame:
+    def expand_result_data_by_model(self, model: object) -> pd.DataFrame:
         """_summary_
 
         Args:
             model (str): SkellamDist
         """
-        df = self.fixture_data()
+        df = model.data
         leagues = set(df["league_name"])
         seasons = set(df["league_season"])
-
-        MODEL_LIST = {"SkellamDist": SkellamDistribution}
 
         data = []
         for league in leagues:
             for season in seasons:
-                model_select = MODEL_LIST[model]
-                model_processing = model_select(data=df, season=season, league=league)
-                dff = model_processing.create_result_data()
+                model_select = model
+                dff = model_select.create_result_data()
                 dff["league"] = league
                 dff["season"] = season
                 data.append(dff)
@@ -59,9 +56,10 @@ class GeneralData:
 if "__main__" == __name__:
     data = GeneralData(seasons=[2020, 2021, 2022])
     df = data.fixture_data()
-    model = SkellamDistribution(data=df)
 
-    expanded_data = data.expand_result_data_by_model(model="SkellamDist")
+    model = SkellamDistribution(data=df, zero_inf=0)
+
+    expanded_data = data.expand_result_data_by_model(model=model)
 
     print(expanded_data)
 

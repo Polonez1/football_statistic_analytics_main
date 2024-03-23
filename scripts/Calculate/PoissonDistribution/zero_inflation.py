@@ -37,12 +37,13 @@ def __get_total_count_matches(data: pd.DataFrame):
     return data["count"].sum()
 
 
-def zero_probability_koef(data: pd.DataFrame):
-    print(data)
-    home_zero = data["goals_home"].tolist().count(0) / len(data["goals_home"])
-    away_zero = data["goals_away"].tolist().count(0) / len(data["goals_away"])
-
-    return home_zero, away_zero
+# def zero_probability_koef(data: pd.DataFrame):
+#    home_zero = data["goals_home"].tolist().count(0) / len(data["goals_home"])
+#    away_zero = data["goals_away"].tolist().count(0) / len(data["goals_away"])
+#    print(data["goals_home"].tolist().count(0))
+#    print(len(data["goals_home"]))
+#
+#    return 1, 1
 
 
 def __create_params(data: pd.DataFrame):
@@ -65,20 +66,3 @@ def zero_inflation_koef(source_data: pd.DataFrame, skellam_data: pd.DataFrame):
 
 if "__main__" == __name__:
     pass
-    ## Dane dotyczące liczby goli w meczach piłkarskich
-    # goals = np.array([0, 2, 1, 0, 1, 3, 0, 0, 2, 1])
-#
-## Przykładowe zmienne egzogeniczne
-# ages = np.array([30, 25, 28, 32, 27, 29, 31, 26, 28, 27])
-#
-## Dopasowanie modelu zero-inflated Poissona do danych za pomocą MLE
-# model = sm.ZeroInflatedPoisson(goals, exog=ages, inflation="logit")
-# results = model.fit()
-#
-## Pobranie oszacowanych parametrów
-# params = results.params
-#
-## Obliczenie prawdopodobieństwa zerowego wyniku na podstawie oszacowanych parametrów
-# zero_prob = np.exp(params[0]) / (1 + np.exp(params[0]))
-#
-# print("Prawdopodobieństwo wyniku 0:", zero_prob)

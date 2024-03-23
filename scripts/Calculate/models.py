@@ -7,7 +7,13 @@ import numpy as np
 
 class SkellamDistribution(SkellamProccesing):
 
-    def __init__(self, data: pd.DataFrame, season: int = None, league: str = None):
+    def __init__(
+        self,
+        data: pd.DataFrame,
+        season: int = None,
+        league: str = None,
+        zero_inf: str = None,
+    ):
         super().__init__(data, season, league)
 
     def skellam_matrix(self):
