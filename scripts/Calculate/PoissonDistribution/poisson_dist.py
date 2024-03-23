@@ -3,14 +3,12 @@ import pandas as pd
 import numpy as np
 
 
-def calculate_poisson_dist(
-    avg: int, zero_prob: float = 0, range_from: int = 0, range_to: int = 11
-):
-    p_zero = zero_prob
+# -------------POISSON__DISTRIBUTION-----------------------#
+def __standart_distribution(avg, goals_list):
+    return [poisson.pmf(k=goal, mu=avg).round(2) for goal in goals_list]
 
-    goals_list = list(range(range_from, range_to))
-    standart_dist = [poisson.pmf(k=goal, mu=avg).round(2) for goal in goals_list]
 
+def __zero_inflated_distribution(avg, goals_list, p_zero):
     zero_inflated_dist = []
     for goal in goals_list:
         if goal == 0:
@@ -22,7 +20,19 @@ def calculate_poisson_dist(
                 (1 - p_zero) * poisson.pmf(k=goal, mu=avg).round(2)
             )
 
-    if zero_prob == 0:
+    return zero_inflated_dist
+
+
+def calculate_poisson_dist(
+    avg: int, p_zero: float = 0, range_from: int = 0, range_to: int = 11
+):
+    goals_list = list(range(range_from, range_to))
+    standart_dist = __standart_distribution(avg=avg, goals_list=goals_list)
+    zero_inflated_dist = __zero_inflated_distribution(
+        avg=avg, goals_list=goals_list, p_zero=p_zero
+    )
+
+    if p_zero == 0:
         dist = standart_dist
     else:
         dist = zero_inflated_dist
@@ -35,9 +45,12 @@ def calculate_poisson_dist(
     return df
 
 
-def skellam_dist_matrix(avg_1, avg_2):
-    distribution_1 = calculate_poisson_dist(avg=avg_1, zero_prob=0.2)
-    distribution_2 = calculate_poisson_dist(avg=avg_2, zero_prob=0.2)
+# ---------------------------------------------------------------------------------------------------#
+
+
+def skellam_dist_matrix(avg_1, avg_2, **kwargs):
+    distribution_1 = calculate_poisson_dist(avg=avg_1, **kwargs)
+    distribution_2 = calculate_poisson_dist(avg=avg_2, **kwargs)
     matrix = np.outer(distribution_1["p"], distribution_2["p"])
     result_df = pd.DataFrame(
         matrix, index=distribution_1["goal"], columns=distribution_2["goal"]
@@ -45,8 +58,8 @@ def skellam_dist_matrix(avg_1, avg_2):
     return result_df
 
 
-def goals_matrix_melt(avg_1, avg_2):
-    result_df = skellam_dist_matrix(avg_1=avg_1, avg_2=avg_2)
+def __goals_matrix_melt(avg_1, avg_2, **kwargs):
+    result_df = skellam_dist_matrix(avg_1=avg_1, avg_2=avg_2, **kwargs)
     result_df_melt = result_df.stack().reset_index()
     result = result_df_melt.rename(
         columns={"level_0": "goal_1", "goal": "goal_2", 0: "prb"}, inplace=False
@@ -58,16 +71,17 @@ def goals_matrix_melt(avg_1, avg_2):
     return result
 
 
-def results_distribution_by_skellam(avg_1, avg_2, total):
-    df = goals_matrix_melt(avg_1=avg_1, avg_2=avg_2)
+# --------------------------------------------------------------------------------------------------#
+def results_distribution_by_skellam(avg_1, avg_2, total, **kwargs):
+    df = __goals_matrix_melt(avg_1=avg_1, avg_2=avg_2, **kwargs)
     df["exp_counts"] = df["prb"] * total
     df["exp_counts"] = df["exp_counts"].round(0)
 
     return df
 
 
-def result_from_skellam_matrix(avg_1, avg_2):
-    skellam_matrix = skellam_dist_matrix(avg_1, avg_2)
+def result_from_skellam_matrix(avg_1, avg_2, **kwargs):
+    skellam_matrix = skellam_dist_matrix(avg_1, avg_2, **kwargs)
     goals_range = list(range(0, 11))
 
     draw = 0
@@ -92,8 +106,8 @@ def result_from_skellam_matrix(avg_1, avg_2):
     )
 
 
-def over_from_skellam_matrix(avg_1, avg_2, overunder: float = 2.5):
-    skellam_matrix = skellam_dist_matrix(avg_1, avg_2)
+def over_from_skellam_matrix(avg_1, avg_2, overunder: float = 2.5, **kwargs):
+    skellam_matrix = skellam_dist_matrix(avg_1, avg_2, **kwargs)
     goals_range = list(range(0, 11))
     over = 0
     under = 0
@@ -113,8 +127,8 @@ def over_from_skellam_matrix(avg_1, avg_2, overunder: float = 2.5):
     )
 
 
-def btts_from_skellam_matrix(avg_1, avg_2):
-    skellam_matrix = skellam_dist_matrix(avg_1, avg_2)
+def btts_from_skellam_matrix(avg_1, avg_2, **kwargs):
+    skellam_matrix = skellam_dist_matrix(avg_1, avg_2, **kwargs)
     goals_range = list(range(0, 11))
     btts = 0
     nobtts = 0
@@ -134,11 +148,11 @@ def btts_from_skellam_matrix(avg_1, avg_2):
     )
 
 
-def team_over_from_skellam_matrix(avg_1, avg_2):
+def team_over_from_skellam_matrix(avg_1, avg_2, **kwargs):
     pass
 
 
-def asian_handicap_from_skellam_matrix(avg_1, avg_2):
+def asian_handicap_from_skellam_matrix(avg_1, avg_2, **kwargs):
     pass
 
 
@@ -189,5 +203,5 @@ def asian_handicap_from_skellam_matrix(avg_1, avg_2):
 
 
 if "__main__" == __name__:
-    df = btts_from_skellam_matrix(avg_1=0.8, avg_2=3.1)
+    df = skellam_dist_matrix(avg_1=2.5, avg_2=0.7)
     print(df)
