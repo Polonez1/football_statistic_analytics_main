@@ -13,6 +13,7 @@ class GeneralData:
     def __init__(self, seasons):
         self.SQL = ssh_sql_connector.SQL_connector()
         self.seasons: list = seasons
+        self.fixtures_data = self.fixture_data()
 
     def standigs_data(self) -> pd.DataFrame:
         data_list = []
@@ -31,25 +32,30 @@ class GeneralData:
 
         return dff
 
+    def expand_data_by_model(self, model):
+        """skellam"""
+        fixtures = self.fixtures_data
+        leagues = set(fixtures["league_name"])
+        seasons = set(fixtures["league_season"])
+        zero_inf_values = np.arange(0, 0.21, 0.01).tolist()
+        dff = []
+        for season in seasons:
+            for league in leagues:
+                for z in zero_inf_values:
+                    print(season, league, z)
+                    selectet_model = model(
+                        data=fixtures, zero_inf=float(z), season=season, league=league
+                    )
+                    df = selectet_model.create_result_data()
+                    df["zero_inf_koef"] = z
+                    df["league"] = league
+                    df["season"] = season
+                    dff.append(df)
+        data_csv: pd.DataFrame = pd.concat(dff)
+        return data_csv
+
 
 if "__main__" == __name__:
     data = GeneralData(seasons=[2020, 2021, 2022])
-    fixtures = data.fixture_data()
-    leagues = set(fixtures["league_name"])
-    seasons = set(fixtures["league_season"])
-    zero_inf_values = np.arange(0, 0.21, 0.01).tolist()
-    dff = []
-    for season in seasons:
-        for league in leagues:
-            for z in zero_inf_values:
-                print(season, league, z)
-                model = SkellamDistribution(
-                    data=fixtures, zero_inf=float(z), season=season, league=league
-                )
-                df = model.create_result_data()
-                df["zero_inf_koef"] = z
-                df["league"] = league
-                df["season"] = season
-                dff.append(df)
-    data_csv: pd.DataFrame = pd.concat(dff)
-    data_csv.to_csv("data.csv")
+    df = data.expand_data_by_model(model=SkellamDistribution)
+    print(df)
