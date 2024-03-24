@@ -2,11 +2,10 @@ import pandas as pd
 import numpy as np
 
 
-def expand_data_by_skellam(self, model):
+def expand_data_by_skellam(self, data, model):
     """skellam"""
-    fixtures = self.fixtures_data
-    leagues = set(fixtures["league_name"])
-    seasons = set(fixtures["league_season"])
+    leagues = set(data["league_name"])
+    seasons = set(data["league_season"])
     zero_inf_values = np.arange(0, 0.21, 0.01).tolist()
     dff = []
     for season in seasons:
@@ -14,7 +13,7 @@ def expand_data_by_skellam(self, model):
             for z in zero_inf_values:
                 print(season, league, z)
                 selectet_model = model(
-                    data=fixtures, zero_inf=float(z), season=season, league=league
+                    data=data, zero_inf=float(z), season=season, league=league
                 )
                 df = selectet_model.create_result_data()
                 df["zero_inf_koef"] = z
