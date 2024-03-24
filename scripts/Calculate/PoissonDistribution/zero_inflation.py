@@ -37,15 +37,6 @@ def __get_total_count_matches(data: pd.DataFrame):
     return data["count"].sum()
 
 
-# def zero_probability_koef(data: pd.DataFrame):
-#    home_zero = data["goals_home"].tolist().count(0) / len(data["goals_home"])
-#    away_zero = data["goals_away"].tolist().count(0) / len(data["goals_away"])
-#    print(data["goals_home"].tolist().count(0))
-#    print(len(data["goals_home"]))
-#
-#    return 1, 1
-
-
 def __create_params(data: pd.DataFrame):
     zero_sum = __get_zero_count_matches(data=data)
     total_sum = __get_total_count_matches(data=data)

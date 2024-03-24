@@ -14,7 +14,7 @@ class SkellamDistribution(SkellamProccesing):
         league: str = None,
         zero_inf: str = None,
     ):
-        super().__init__(data, season, league)
+        super().__init__(data, season, league, zero_inf)
 
     def skellam_matrix(self):
         return super().skellam_matrix()

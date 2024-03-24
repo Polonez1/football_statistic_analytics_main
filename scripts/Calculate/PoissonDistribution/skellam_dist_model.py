@@ -18,6 +18,8 @@ class SkellamProccesing:
         self.season = season
         self.data = data
         self.zero_inflation = zero_inf
+        if zero_inf is None:
+            self.zero_inflation = 0.02
 
         if season is not None:
             self.__filter_by_season()
@@ -26,7 +28,12 @@ class SkellamProccesing:
 
         self.averages = self.__get_averages()
         self.model_params = self.__skellam_params()
-        # self.zero_inf_params = self.__zero_inflation_params()
+        self.zero_inf_params = self.__zero_inflation_params()
+
+    def print_attributes(self):
+        attributes = self.__dict__
+        for attr, value in attributes.items():
+            print(f"{attr}: {value}")
 
     def __filter_by_season(self):
         if self.season is not None:
@@ -60,6 +67,7 @@ class SkellamProccesing:
             "total": total,
             "season": season,
             "league": league,
+            "p_zero": self.zero_inflation,
         }
 
     def skellam_distribution_data(self):
@@ -67,6 +75,7 @@ class SkellamProccesing:
             avg_1=self.averages["goals_home"],
             avg_2=self.averages["goals_away"],
             total=self.averages["fixture_id"],
+            p_zero=self.zero_inflation,
         )
         skellam_dist = skellam_processing.skellam_dist_processing(skellam_dist)
         return skellam_dist
@@ -79,7 +88,12 @@ class SkellamProccesing:
 
     def skellam_matrix(self):
         matrix = poisson_dist.skellam_dist_matrix(
-            avg_1=self.averages["goals_home"], avg_2=self.averages["goals_away"]
+            avg_1=self.averages["goals_home"],
+            avg_2=self.averages["goals_away"],
+            p_zero=self.zero_inflation,
+        )
+        print(
+            f"skellam_matrix\n p_zero: {self.zero_inflation}, home: {self.averages['goals_home']}, away: {self.averages['goals_away']}"
         )
 
         return matrix
@@ -107,7 +121,9 @@ class SkellamProccesing:
 
     def __create_skellam_win_data(self):
         result_skellam = poisson_dist.result_from_skellam_matrix(
-            avg_1=self.averages["goals_home"], avg_2=self.averages["goals_away"]
+            avg_1=self.averages["goals_home"],
+            avg_2=self.averages["goals_away"],
+            p_zero=self.zero_inflation,
         )
         result_skellam["count"] = round(
             result_skellam["prb"] * self.averages["fixture_id"], 0
@@ -133,7 +149,9 @@ class SkellamProccesing:
 
     def __create_overunder_skellam_data(self, over_under: float = 2.5):
         df = poisson_dist.over_from_skellam_matrix(
-            avg_1=self.averages["goals_home"], avg_2=self.averages["goals_away"]
+            avg_1=self.averages["goals_home"],
+            avg_2=self.averages["goals_away"],
+            p_zero=self.zero_inflation,
         )
         df["count"] = round(df["prb"] * self.averages["fixture_id"], 0).astype("int")
         df["source"] = "skellam dist"
@@ -151,12 +169,12 @@ class SkellamProccesing:
             source_data=self.source_distribution_data(),
             skellam_data=self.skellam_distribution_data(),
         )
-        zero_home, zero_away = zero_inflation.zero_probability_koef(data=self.data)
-
         return {
             "zero_sum_count": zero_sum,
             "total_sum_count": total_sum,
             "percentage": round(percentage, 2),
-            "home_zero": zero_home,
-            "away_zero": zero_away,
         }
+
+
+if "__main__" == __name__:
+    pass
