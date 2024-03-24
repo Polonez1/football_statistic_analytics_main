@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 
 from SQL import get_data, ssh_sql_connector
 from Processing import add_columns
@@ -31,36 +31,25 @@ class GeneralData:
 
         return dff
 
-    def expand_result_data_by_model(self, model: object) -> pd.DataFrame:
-        """_summary_
-
-        Args:
-            model (str): SkellamDist
-        """
-        df = model.data
-        leagues = set(df["league_name"])
-        seasons = set(df["league_season"])
-
-        data = []
-        for league in leagues:
-            for season in seasons:
-                model_select = model
-                dff = model_select.create_result_data()
-                dff["league"] = league
-                dff["season"] = season
-                data.append(dff)
-
-        return pd.concat(data)
-
 
 if "__main__" == __name__:
     data = GeneralData(seasons=[2020, 2021, 2022])
-    df = data.fixture_data()
-
-    model = SkellamDistribution(data=df, zero_inf=0.05)
-    df = data.expand_result_data_by_model(model=model)
-
-    # df = data.expand_result_data_by_model(model="SkellamDist")
-
-    # df.to_csv("data.csv")
-    # print(df)
+    fixtures = data.fixture_data()
+    leagues = set(fixtures["league_name"])
+    seasons = set(fixtures["league_season"])
+    zero_inf_values = np.arange(0, 0.21, 0.01).tolist()
+    dff = []
+    for season in seasons:
+        for league in leagues:
+            for z in zero_inf_values:
+                print(season, league, z)
+                model = SkellamDistribution(
+                    data=fixtures, zero_inf=float(z), season=season, league=league
+                )
+                df = model.create_result_data()
+                df["zero_inf_koef"] = z
+                df["league"] = league
+                df["season"] = season
+                dff.append(df)
+    data_csv: pd.DataFrame = pd.concat(dff)
+    data_csv.to_csv("data.csv")
