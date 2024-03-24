@@ -56,6 +56,4 @@ class GeneralData:
 
 
 if "__main__" == __name__:
-    data = GeneralData(seasons=[2020, 2021, 2022])
-    df = data.expand_data_by_model(model=SkellamDistribution)
-    print(df)
+    data_object = GeneralData(seasons=[2020, 2021, 2022])
